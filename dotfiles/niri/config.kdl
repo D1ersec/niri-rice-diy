@@ -205,7 +205,9 @@ binds {
     Mod+Shift+E { quit; }
 
     // ── DMS 面板 ───────────────────────────────────────────────────
-    Mod+A { spawn "dms" "ipc" "call" "dash" "toggle"; }          // 控制中心 / 仪表盘
+    // 2.x 的 dash toggle 需要标签参数（1.4.4 时代无需参数，直接 toggle 会报
+    // "Too few arguments provided"）
+    Mod+A { spawn "dms" "ipc" "call" "dash" "toggle" "overview"; }  // 负一屏 / 仪表盘
     Mod+N { spawn "dms" "ipc" "call" "notifications" "toggle"; }
     Mod+Shift+V { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
     Mod+Ctrl+N { spawn "dms" "ipc" "call" "night" "toggle"; }    // 夜灯
