@@ -75,3 +75,10 @@
 - 顶栏：贴边全宽、直角、无胶囊，左侧「应用名 + 工作区」、右侧「布局 + 托盘 + 温度 + 通知 + 时钟」。
 - 磨砂：`dms blur check` 返回 supported，`BlurService` 启用。
 - `Super+O`：开启 `blurWallpaperOnOverview` 时 backdrop 是模糊壁纸，关闭时是锐利原图（A/B 实测）。
+
+## 主题生效的像素证据（2026-11-14）
+
+从负一屏截图里裁剪卡片区域做直方图，面板与卡片底色落在 `#1c1c1e`、`#232326`、`#2c2c2e`
+（`ricemacos` 的 surface / surfaceContainer / surfaceVariant），而不是默认色板 `purple` 的
+`#1d2024` / `#272a2f` / `#32353a`。说明 `currentThemeName` 这条链路是通的——写错键名（早期写成
+`currentTheme`）时卡片会退回紫色 tonal 表面。
