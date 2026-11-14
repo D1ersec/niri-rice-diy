@@ -8,7 +8,8 @@
 
 | 键 | 默认 | 目标 | 理由 |
 |---|---|---|---|
-| `currentTheme` | `purple` | `ricemacos` | 中性灰阶层级 + 系统蓝 accent（`StockThemes.js` 里新增的色板） |
+| `currentThemeName` | `purple` | `ricemacos` | 中性灰阶层级 + 系统蓝 accent（`StockThemes.js` 里新增的色板）。键名不是 `currentTheme`——那个是 `Theme.qml` 的内部属性，写进 settings.json 无效 |
+| `currentThemeCategory` | `generic` | `generic` | 与内置主题同组 |
 | `blurEnabled` | `false` | `true` | 打开合成器磨砂的开关（`BlurService` 会探测 `ext-background-effect-v1`） |
 | `blurStrength` | `0` | `0` | 0 = 用 niri 侧 `blur{}` 的强度，不在 QML 里再叠一层 |
 | `blurredWallpaperLayer` | `false` | `true` | 让 `dms:blurwallpaper` 层真的渲染模糊壁纸 |
@@ -58,3 +59,19 @@
 
 八张卡的目标清单（时钟、系统、存储、网络、电池、天气、日历、媒体）落地时对应
 `dash` 的标签页与卡片注册表（`Modules/DDash/DashRegistry.qml`）；本轮先记目标，等外壳跑起来后按实际卡片能力裁剪。
+
+## 运行时接线（实测踩出来的三条）
+
+1. **必须用本仓库的 `core/bin/dms`**。外壳调用 `dms blur check` 探测 `ext-background-effect-v1`；
+   系统 `/usr/bin/dms` 是 1.4.4，没有这个子命令，会误判成"合成器不支持模糊"，磨砂全局失效。
+2. **`dms run` 内部 exec PATH 里的 `qs`**。仓库内造 `.bin/qs -> ~/.local/bin/quickshell`，只在
+   `tools/run-rice.sh` 的 PATH 前缀里生效；不要往 `~/.local/bin` 放名为 `qs` 的链接，否则会遮蔽
+   `/usr/bin/qs` 并弄坏仍在跑的 DMS 1.4.4。
+3. **quickshell 用上游 `9b0f339b`，且 Hyprland 插件必须编进去**。`WallpaperBackground.qml` 会
+   `import Quickshell.Hyprland`，关掉该插件会导致 `Configuration Loaded` 失败。
+
+## 已验证（2026-11-14）
+
+- 顶栏：贴边全宽、直角、无胶囊，左侧「应用名 + 工作区」、右侧「布局 + 托盘 + 温度 + 通知 + 时钟」。
+- 磨砂：`dms blur check` 返回 supported，`BlurService` 启用。
+- `Super+O`：开启 `blurWallpaperOnOverview` 时 backdrop 是模糊壁纸，关闭时是锐利原图（A/B 实测）。

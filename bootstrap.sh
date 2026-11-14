@@ -60,7 +60,8 @@ if [[ -f "$QS_SRC/CMakeLists.txt" ]]; then
   run env QUICKSHELL_SRC="$QS_SRC" PREFIX="$PREFIX" "$REPO/tools/build-quickshell.sh"
 else
   say "缺源码，请先："
-  say "  git clone --depth 1 --branch v0.3.2 https://github.com/quickshell-mirror/quickshell.git $QS_SRC"
+  say "  git clone --depth 1 https://github.com/quickshell-mirror/quickshell.git $QS_SRC"
+  say "  git -C $QS_SRC checkout 9b0f339b19057f4731bf3b48293307d7ef241671"
 fi
 
 # ── 4. 链接配置 ───────────────────────────────────────────────────

@@ -21,7 +21,13 @@ Fedora 只有 quickshell 0.2.1，加载本仓库的 `shell.qml` 会立刻报：
 ERROR: Unrecognized pragma "AppId dev.duxlabs.shell"
 ```
 
-v0.3.2 才同时具备 `pragma AppId` 与 `ext-background-effect`（合成器磨砂的协议实现），所以自编到 `~/.local`，不替换系统包。
+自编的上游提交是 **`9b0f339b`（2026-10-21）**，它是 dux-shell 2.x 对应的基底（上游运行时 fork
+`dux-qt-base` 就基于这个提交），比 v0.3.2 新。装到 `~/.local/bin/quickshell`，不替换系统包，
+也**不安装 `qs` 这个名字**——避免遮蔽 `/usr/bin/qs` 而弄坏仍在跑的 DMS 1.4.4。
+
+quickshell 0.3 起把 QML 模块静态编进可执行文件，因此没有 `qt6/qml` 目录，也不需要
+`QML_IMPORT_PATH`。**Hyprland 插件必须编进去**（外壳的 `WallpaperBackground.qml` 会 import
+`Quickshell.Hyprland`），即使我们只用 niri。
 
 ## 验收（三项都要过）
 
