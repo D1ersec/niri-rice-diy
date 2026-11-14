@@ -1,0 +1,64 @@
+// Rice 覆盖层
+// 位置：必须在 config.kdl 里 DMS 的 dms/*.kdl 之后 include —— KDL 逐字段合并、后写的赢。
+// 只写"我们拥有"的值：DMS 设置界面能改的（输出、光标、Alt-Tab 配色）不写在这里，避免两边打架。
+// 依据：ADR 0004（niri 配置用末尾覆盖层接管）、ADR 0002（磨砂只认合成器）。
+
+blur {
+    // 比默认更"奶油"：offset 调大（不增加 GPU 开销）、噪点减少、饱和度略降，接近 macOS 的 vibrancy。
+    // 出现伪影时再增加 passes（每加一次都更贵）。
+    passes 4
+    offset 4
+    noise 0.015
+    saturation 1.2
+}
+
+layout {
+    gaps 10
+
+    border {
+        width 2
+        active-color "#3a3a3c"
+        inactive-color "#2c2c2e"
+    }
+
+    focus-ring {
+        width 2
+        active-color "#0a84ff"
+        inactive-color "#3a3a3c"
+    }
+
+    shadow {
+        on
+        softness 30
+        spread 5
+        offset x=0 y=8
+        color "#00000055"
+    }
+}
+
+window-rule {
+    // 统一圆角，贴近 macOS 的窗口观感
+    geometry-corner-radius 16
+    clip-to-geometry true
+}
+
+// 外壳的弹出菜单是 xdg-popup，不是独立层表面，模糊必须在这里单独给。
+layer-rule {
+    match namespace="^dms:"
+
+    popups {
+        background-effect {
+            blur true
+        }
+    }
+}
+
+// 安全网：表面自己没有通过 ext-background-effect 请求模糊时也补上。
+// 对不透明表面没有副作用（看不见背后），对半透明表面正是我们要的效果。
+layer-rule {
+    match namespace="^dms:(frame|dankisland|dock|spotlight|notification-popup|toast|workspace-overview)"
+
+    background-effect {
+        blur true
+    }
+}
