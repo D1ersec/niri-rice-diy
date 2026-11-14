@@ -134,3 +134,6 @@ core/dms
 core/duxinstall
 
 core/internal/shellembed/dist
+
+# 本仓库脚本生成的帮助目录（run-rice.sh / bootstrap.sh 会建）
+.bin/
