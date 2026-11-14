@@ -1,0 +1,24 @@
+# Rice 外壳的会话级单元：替代系统的 dms.service 跑本仓库的外壳。
+#
+# 为什么要有它：/usr/bin/dms 1.4.4 启动时会把 ~/.config/DankMaterialShell 的条目搬进
+# ~/.config/dms，而它自己的 QML 仍按旧路径读，于是每次启动都重放 changelog 并报主题错误。
+# 换成自己的外壳后，两个目录不再互相踩。
+#
+# 回滚：systemctl --user disable --now rice-shell && systemctl --user enable --now dms.service
+[Unit]
+Description=Rice Shell (niri, forked dux-shell)
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+Conflicts=dms.service
+
+[Service]
+Type=simple
+# --keep-dms：不动 dms.service（它已被 Conflicts 和 disable 处理），只跑外壳
+ExecStart=/home/zhou/NiriRiceDIY/tools/run-rice.sh --keep-dms
+Restart=on-failure
+RestartSec=1.5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=graphical-session.target

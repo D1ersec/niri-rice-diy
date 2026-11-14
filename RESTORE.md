@@ -42,3 +42,28 @@ quickshell 0.3 起把 QML 模块静态编进可执行文件，因此没有 `qt6/
 ## 回滚
 
 系统 DMS 1.4.4 的包没有被动过：`systemctl --user start dms.service` 就回到原样。
+
+## 开机默认用哪个外壳
+
+`dotfiles/systemd/rice-shell.service` 是会话级单元，跑本仓库的外壳；启用它就要停用系统的
+`dms.service`（两者都声明 `Conflicts`，只能活一个）。
+
+切换：
+
+```bash
+ln -sfn ~/NiriRiceDIY/dotfiles/systemd/rice-shell.service ~/.config/systemd/user/rice-shell.service
+systemctl --user daemon-reload
+systemctl --user disable --now dms.service
+systemctl --user enable --now rice-shell.service
+```
+
+回滚（系统 DMS 1.4.4 的包一直没动）：
+
+```bash
+systemctl --user disable --now rice-shell.service
+systemctl --user enable --now dms.service
+```
+
+**为什么不干脆并存**：`/usr/bin/dms` 1.4.4 启动时会把 `~/.config/DankMaterialShell/` 的条目搬进
+`~/.config/dms/`，而它自己的 QML 仍按旧路径读，于是每次启动都会重放 changelog、并报
+`Failed to read theme file`。两个外壳同时存在就一定会互相踩，所以只留一个。
